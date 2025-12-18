@@ -1,0 +1,117 @@
+{
+    "condition_descriptors": {
+        "excellent": {
+            "opening": "This item is in excellent condition with minimal signs of use.",
+            "modifiers": [
+                "pristine",
+                "like new",
+                "barely used"
+            ]
+        },
+        "good": {
+            "opening": "This item is in good condition with some normal signs of use.",
+            "modifiers": [
+                "well-maintained",
+                "functional",
+                "reliable"
+            ]
+        },
+        "fair": {
+            "opening": "This item is in fair condition showing moderate signs of use.",
+            "modifiers": [
+                "functional",
+                "shows wear",
+                "usable"
+            ]
+        },
+        "poor": {
+            "opening": "This item shows significant signs of use.",
+            "modifiers": [
+                "heavily used",
+                "worn",
+                "functional but aged"
+            ]
+        }
+    },
+    "issue_phrases": {
+        "scratch": {
+            "minor": "minor scratches",
+            "moderate": "visible scratches",
+            "severe": "deep scratches"
+        },
+        "wear": {
+            "minor": "light wear marks",
+            "moderate": "noticeable wear",
+            "severe": "significant wear"
+        },
+        "discoloration": {
+            "minor": "slight discoloration",
+            "moderate": "visible discoloration",
+            "severe": "heavy discoloration"
+        },
+        "dent": {
+            "minor": "small dent",
+            "moderate": "noticeable dent",
+            "severe": "major dent"
+        },
+        "crack": {
+            "minor": "hairline crack",
+            "moderate": "visible crack",
+            "severe": "significant crack"
+        }
+    },
+    "location_phrases": {
+        "lens": "on the lens",
+        "body": "on the body",
+        "screen": "on the screen",
+        "corner": "on the corner",
+        "back": "on the back panel",
+        "front": "on the front",
+        "side": "on the side",
+        "handle": "on the handle",
+        "button": "on the button area"
+    },
+    "discount_explanations": {
+        "low": {
+            "range": [
+                0,
+                15
+            ],
+            "phrase": "The minor imperfections result in a modest discount"
+        },
+        "medium": {
+            "range": [
+                16,
+                35
+            ],
+            "phrase": "The condition issues are reflected in a fair discount"
+        },
+        "high": {
+            "range": [
+                36,
+                60
+            ],
+            "phrase": "The visible wear justifies a significant discount"
+        },
+        "very_high": {
+            "range": [
+                61,
+                100
+            ],
+            "phrase": "The extensive wear is reflected in a substantial discount"
+        }
+    },
+    "transition_phrases": [
+        "However",
+        "Additionally",
+        "Notably",
+        "It's worth noting that",
+        "Despite this"
+    ],
+    "positive_closings": [
+        "making it an excellent value proposition",
+        "offering great value for the price",
+        "presenting a solid opportunity for budget-conscious buyers",
+        "making it competitively priced in the current market"
+    ]
+}

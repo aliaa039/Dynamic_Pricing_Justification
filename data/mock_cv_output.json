@@ -1,0 +1,61 @@
+{
+    "examples": [
+        {
+            "item_id": "CAM001",
+            "condition_score": 8.5,
+            "detected_issues": [
+                {
+                    "type": "scratch",
+                    "location": "lens",
+                    "severity": "minor",
+                    "confidence": 0.92
+                }
+            ],
+            "overall_condition": "excellent"
+        },
+        {
+            "item_id": "PHONE002",
+            "condition_score": 7.2,
+            "detected_issues": [
+                {
+                    "type": "scratch",
+                    "location": "screen",
+                    "severity": "moderate",
+                    "confidence": 0.88
+                },
+                {
+                    "type": "wear",
+                    "location": "corner",
+                    "severity": "minor",
+                    "confidence": 0.85
+                }
+            ],
+            "overall_condition": "good"
+        },
+        {
+            "item_id": "LAPTOP003",
+            "condition_score": 6.0,
+            "detected_issues": [
+                {
+                    "type": "discoloration",
+                    "location": "body",
+                    "severity": "moderate",
+                    "confidence": 0.79
+                },
+                {
+                    "type": "wear",
+                    "location": "corner",
+                    "severity": "moderate",
+                    "confidence": 0.82
+                },
+                {
+                    "type": "scratch",
+                    "location": "screen",
+                    "severity": "minor",
+                    "confidence": 0.75
+                }
+            ],
+            "overall_condition": "fair"
+        }
+    ]
+}
