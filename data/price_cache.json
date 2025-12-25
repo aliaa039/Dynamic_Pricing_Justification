@@ -67,7 +67,7 @@
     "timestamp": "2025-12-24T22:43:30.516670",
     "price_data": {
       "price": 40000.0,
-      "source": "Egyptian Store (Egyptian Retailer)",
+      "source": "Egyptian Store (Egyptian Retailer) (Cached) (Cached) (Cached)",
       "confidence": 0.85,
       "currency": "EGP",
       "total_results": 1,
@@ -135,6 +135,41 @@
         "min": 22999.0,
         "max": 22999.0,
         "median": 22999.0
+      }
+    }
+  },
+  "apple_\u0627\u064a\u0641\u0648\u0646_16_\u0628\u0631\u0648_\u0645\u0627\u0643\u0633_1\u062a\u064a\u0631\u0627_\u062c\u064a\u062c\u0627": {
+    "timestamp": "2025-12-25T20:50:37.184916",
+    "price_data": {
+      "price": 92800.0,
+      "source": "Egyptian Store (Dream 2000)",
+      "confidence": 0.85,
+      "currency": "EGP",
+      "total_results": 3,
+      "results": [
+        {
+          "title": "\u0645\u0648\u0627\u0635\u0641\u0627\u062a \u0648\u0623\u0633\u0639\u0627\u0631 \u062c\u0645\u064a\u0639 \u0647\u0648\u0627\u062a\u0641 iPhone 17 \u0627\u064a\u0641\u0648\u0646 17",
+          "store": "Dream 2000",
+          "price": 86700.0,
+          "url": "https://dream2000.com/blog/post/%D9%85%D9%88%D8%A7%D8%B5%D9%81%D8%A7%D8%AA-%D9%88%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1-%D8%AC%D9%85%D9%8A%D8%B9-%D9%87%D9%88%D8%A7%D8%AA%D9%81-iphone-17-%D8%A7%D9%8A%D9%81%D9%88%D9%86-17/"
+        },
+        {
+          "title": "\u0633\u0627\u0645\u0633\u0648\u0646\u062c Z \u0641\u0648\u0644\u062f 5 \u0631\u0627\u0645\u0627\u062a 12 \u062c\u064a\u062c\u0627\u060c \u0630\u0627\u0643\u0631\u0629 256 \u062c\u064a\u062c\u0627 - \u0623\u0633\u0648\u062f",
+          "store": "Dream 2000",
+          "price": 92800.0,
+          "url": "https://dream2000.com/samsung-z-fold-5-12gb-ram-256gb-phantom-black.html?srsltid=AfmBOopZKyiduWZH-mMVMd8F5gH8PSjipbI8wu3w8ltFnnLz9miLpdZG"
+        },
+        {
+          "title": "\u0622\u064a\u0641\u0648\u0646 16 \u0628\u0631\u0648 \u0645\u0627\u0643\u0633 256 \u062c\u064a\u062c\u0627 - \u0623\u0633\u0648\u062f \u062a\u064a\u062a\u0627\u0646\u064a\u0648\u0645(\u0636\u0645\u0627\u0646 \u0633\u0646\u062a\u064a\u0646)",
+          "store": "Dream 2000",
+          "price": 107400.0,
+          "url": "https://dream2000.com/iphone-16-pro-max-256gb-black-titanium-1-html.html?srsltid=AfmBOoqrbMoMKjK1Ze33DCflfLggnKuhH7MDrZs0nWkiVdlOnKLdIYs1"
+        }
+      ],
+      "price_statistics": {
+        "min": 86700.0,
+        "max": 107400.0,
+        "median": 92800.0
       }
     }
   }
