@@ -1,0 +1,42 @@
+{
+    "products": {
+        "oppo_reno_12_5g": {
+            "brand": "OPPO",
+            "model": "Reno 12 5G",
+            "price": 560.00,
+            "category": "phone",
+            "source": "GSMArena",
+            "last_updated": "2024-12-19",
+            "currency": "USD"
+        },
+        "iphone_13": {
+            "brand": "Apple",
+            "model": "iPhone 13",
+            "price": 799.00,
+            "category": "phone",
+            "source": "Apple Store",
+            "last_updated": "2024-12-15",
+            "currency": "USD"
+        },
+        "samsung_galaxy_s21": {
+            "brand": "Samsung",
+            "model": "Galaxy S21",
+            "price": 799.99,
+            "category": "phone",
+            "source": "Samsung Official",
+            "last_updated": "2024-12-10",
+            "currency": "USD"
+        },
+        "canon_eos_80d": {
+            "brand": "Canon",
+            "model": "EOS 80D",
+            "price": 4999.99,
+            "category": "camera",
+            "source": "B&H Photo",
+            "last_updated": "2024-12-10",
+            "currency": "USD"
+        }
+    },
+    "last_updated": "2024-12-19T00:00:00",
+    "total_products": 4
+}

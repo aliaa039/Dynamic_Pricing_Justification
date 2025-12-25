@@ -7,7 +7,7 @@ from src.pricing.discount_explainer import DiscountExplainer
 app = Flask(__name__)
 
 text_generator = TextGenerator()
-price_calculator = PriceCalculator()
+price_calculator = PriceCalculator(use_web_search=True)
 discount_explainer = DiscountExplainer()
 validator = InputValidator()
 
@@ -52,10 +52,11 @@ def generate_explanation():
         if not pricing_data:
             brand = data.get('brand', 'Unknown')
             model = data.get('model', 'Unknown')
+            category = data.get('category')
             reference_price = data.get('reference_price')
             
             pricing_data = price_calculator.calculate_used_price(
-                brand, model, cv_output, reference_price
+                brand, model, cv_output, reference_price, category
             )
         else:
             pricing_validation = validator.validate_pricing_data(pricing_data)
@@ -88,7 +89,9 @@ def generate_explanation():
                 'original_price': pricing_data.get('reference_new_price'),
                 'used_price': pricing_data.get('calculated_used_price'),
                 'discount_percentage': pricing_data.get('discount_percentage'),
-                'discount_breakdown': discount_breakdown
+                'discount_breakdown': discount_breakdown,
+                'price_source': pricing_data.get('price_metadata', {}).get('source'),
+                'price_confidence': pricing_data.get('price_metadata', {}).get('confidence')
             },
             'value_proposition': value_proposition,
             'condition_summary': {
@@ -124,16 +127,53 @@ def calculate_price():
         brand = data.get('brand')
         model = data.get('model')
         cv_output = data.get('cv_output')
+        category = data.get('category')
         reference_price = data.get('reference_price')
         
         if not all([brand, model, cv_output]):
             return jsonify({'error': 'brand, model, and cv_output are required'}), 400
         
         pricing_data = price_calculator.calculate_used_price(
-            brand, model, cv_output, reference_price
+            brand, model, cv_output, reference_price, category
         )
         
         return jsonify(pricing_data), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/search-price', methods=['POST'])
+def search_price():
+    """Endpoint to search for product price only"""
+    try:
+        data = request.json
+        
+        brand = data.get('brand')
+        model = data.get('model')
+        category = data.get('category')
+        
+        if not all([brand, model]):
+            return jsonify({'error': 'brand and model are required'}), 400
+        
+        from src.external.price_search import PriceSearchEngine
+        from src.external.price_cache import PriceCache
+        
+        search_engine = PriceSearchEngine()
+        cache = PriceCache()
+        
+        cached = cache.get(brand, model, category)
+        if cached:
+            cached['cached'] = True
+            return jsonify(cached), 200
+        
+        result = search_engine.search_product_price(brand, model, category)
+        
+        if search_engine.validate_search_result(result):
+            cache.set(brand, model, result, category)
+            result['cached'] = False
+            return jsonify(result), 200
+        else:
+            return jsonify({'error': 'Could not find reliable price', 'result': result}), 404
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
