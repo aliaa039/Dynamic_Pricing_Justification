@@ -4,3 +4,27 @@ echo *.pyc>> .gitignore
 echo .env>> .gitignore
 echo .vscode/>> .gitignore
 echo *.log>> .gitignore
+# General
+__pycache__/
+*.pyc
+.DS_Store
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# IDEs
+.vscode/
+.idea/
+
+# Project specific
+*.log
