@@ -242,5 +242,46 @@
         "median": 92999.0
       }
     }
+  },
+  "iphone_16_pro_max_mobile": {
+    "timestamp": "2025-12-31T21:43:42.495995",
+    "price_data": {
+      "price": 92999.0,
+      "source": "Egyptian Store (Dream 2000)",
+      "confidence": 0.85,
+      "currency": "EGP",
+      "total_results": 4,
+      "results": [
+        {
+          "title": "iPhone 16 Pro Max 256GB - Desert Titanium| Dream 2000",
+          "store": "Dream 2000",
+          "price": 87990.0,
+          "url": "https://dream2000.com/en/iphone-16-pro-max-256gb-desert-titanium.html?srsltid=AfmBOooZQSnQWolzbep4Q_Ptj_wUUVE6YNeGoqaTtXi_qdD0xEy0rWxR"
+        },
+        {
+          "title": "iPhone 16 Pro Max 256GB - Black Titanium | Dream 2000",
+          "store": "Dream 2000",
+          "price": 87990.0,
+          "url": "https://dream2000.com/en/iphone-16-pro-max-256gb-black-titanium-1-html.html?srsltid=AfmBOopu6C5ll-ZA7KCo5M-S3Cj-VuFPHmJG_9K8m5v05VhLED6VOLn_"
+        },
+        {
+          "title": "iPhone 16 Pro Max 1TB Natural Titanium 5G With FaceTime",
+          "store": "Noon",
+          "price": 92999.0,
+          "url": "https://www.noon.com/egypt-en/iphone-16-pro-max-1tb-natural-titanium-5g-with-facetime-international-version/N70106160V/p/"
+        },
+        {
+          "title": "Iphone 16 pro max 512 gb",
+          "store": "Jumia Egypt",
+          "price": 110000.0,
+          "url": "https://www.jumia.com.eg/slp/iphone-16-pro-max-512-gb?srsltid=AfmBOop5Anc6ICySesyzIEXjEVqRQM0rELaGabevhSROUSXRyUnWMpvX"
+        }
+      ],
+      "price_statistics": {
+        "min": 87990.0,
+        "max": 110000.0,
+        "median": 92999.0
+      }
+    }
   }
 }

@@ -13,8 +13,8 @@ def render():
     # Initialize Gemini if key is present in session state
     if st.session_state.gemini_api_key:
         if initialize_gemini(st.session_state.gemini_api_key):
-             # Optional: show a small indicator or keep it silent
-             pass
+            # Optional: show a small indicator or keep it silent
+            pass
     else:
         st.warning("⚠️ No Gemini API Key found in environment variables. Please set GOOGLE_API_KEY.")
     
