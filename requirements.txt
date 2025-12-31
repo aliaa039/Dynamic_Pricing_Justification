@@ -13,3 +13,5 @@ opencv-python
 imagehash
 langchain>=0.0.320
 google-generativeai>=0.2.0
+streamlit-lottie
+requests
