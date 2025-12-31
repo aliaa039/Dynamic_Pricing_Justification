@@ -65,7 +65,7 @@ class CVIntegrationService:
         # We pass search_details if present for a more detailed AI report
         search_details = pricing_data.get('search_details')
         
-        # 🆕 FIX 2: Ensure the generator receives the data it needs
+        #  FIX 2: Ensure the generator receives the data it needs
         bilingual_report = self.report_generator.generate_complete_report(
             product_specs,  # Contains the dynamic web specs
             cv_output,      # Now contains the usage_years

@@ -102,7 +102,7 @@ class PriceCalculator:
         3. Web Search (2-3s)
         4. None (no fallback)
         """
-        # ✅ FIXED: Check database first
+        #  FIXED: Check database first
         db_price = self.price_db.get_price(brand, model)
         if db_price:
             print(f"✅ Price found in DATABASE: {brand} {model}")
@@ -112,7 +112,7 @@ class PriceCalculator:
             print(f"⚠️  Web search disabled, no price found")
             return None
         
-        # ✅ FIXED: Check cache before searching
+        #  FIXED: Check cache before searching
         cached_price = self.price_cache.get(brand, model, category)
         if cached_price:
             print(f"✅ Price found in CACHE: {brand} {model}")
