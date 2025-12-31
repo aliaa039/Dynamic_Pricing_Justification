@@ -16,7 +16,7 @@ class BilingualReportGenerator:
         """
         بياخد المواصفات ويحولها لفقرات تحليلية (English & Arabic).
         """
-        # تحضير المواصفات كمتغير نصي للـ Prompt
+        # Prepare specs summary
         specs = product_specs.get('specifications', {})
         specs_summary = "\n".join([f"- {k}: {v}" for k, v in specs.items()])
         

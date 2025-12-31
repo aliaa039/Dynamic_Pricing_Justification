@@ -10,8 +10,6 @@ class ProductSpecsExtractor:
         load_dotenv()
         self.serpapi_key = os.getenv("SERPAPI_KEY")
         self.google_key = os.getenv("GOOGLE_API_KEY")
-        
-        # التعديل الجوهري: استخدام الموديل المتاح في حسابك حالياً
         self.model_id = "gemini-2.5-flash"
         self.gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model_id}:generateContent?key={self.google_key}"
 
@@ -22,7 +20,7 @@ class ProductSpecsExtractor:
         print(f"\n[Specs Extractor] 🔍 Deep-searching for: {brand} {model} using {self.model_id}")
         
         try:
-            # 1. البحث عبر SerpAPI
+            # 1 SerpAPI
             query = f"{brand} {model} full technical specifications display processor camera battery"
             params = {"q": query, "api_key": self.serpapi_key, "num": 5}
             search_res = requests.get("https://serpapi.com/search.json", params=params, timeout=10)
@@ -33,7 +31,7 @@ class ProductSpecsExtractor:
             
             context = " ".join([f"{r.get('title')}: {r.get('snippet')}" for r in results[:4]])
 
-            # 2. استخراج الـ JSON التقني من سياق البحث
+            # 2 Gemini API
             prompt = f"""Extract full tech specs for {brand} {model} from text: {context}.
             Return ONLY a valid JSON object with keys: 'Display', 'Processor', 'RAM', 'Storage', 'Battery', 'Camera'.
             Be very detailed. No markdown formatting or backticks."""
@@ -43,7 +41,7 @@ class ProductSpecsExtractor:
             
             if ai_res.status_code == 200:
                 raw_text = ai_res.json()['candidates'][0]['content']['parts'][0]['text']
-                # تنظيف النص من أي Markdown لضمان نجاح json.loads
+                # Clean up any unwanted formatting
                 clean_json = re.sub(r'```json|```', '', raw_text).strip()
                 
                 return {
