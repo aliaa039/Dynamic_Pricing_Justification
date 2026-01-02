@@ -1,132 +1,310 @@
 """
-Condition Evaluator
-Converts Gemini CV analysis to standardized condition format
+Condition Evaluator - Extracts structured condition data from Gemini CV analysis
 """
+
 from typing import Dict, List
 
 class ConditionEvaluator:
-    """Evaluates device condition from CV analysis"""
+    """
+    Evaluates device condition from Gemini computer vision analysis results.
+    Converts qualitative assessments to quantitative scores.
+    """
     
-    SEVERITY_MAP = {
-        'low': 'minor',
-        'medium': 'moderate',
-        'high': 'severe'
+    # Condition scoring mapping
+    CONDITION_SCORES = {
+        'excellent': 9.5,
+        'very good': 8.5,
+        'good': 7.0,
+        'fair': 5.0,
+        'poor': 3.0,
+        'damaged': 2.0,
+        'broken': 1.0
+    }
+    
+    # Severity weights for discount calculation
+    SEVERITY_WEIGHTS = {
+        'minor': 0.02,      # 2% impact
+        'moderate': 0.05,   # 5% impact
+        'severe': 0.10,     # 10% impact
+        'critical': 0.15    # 15% impact
     }
     
     def evaluate_from_gemini(
         self, 
         gemini_analysis: Dict, 
-        usage_years: float
+        usage_years: float = 1.0
     ) -> Dict:
         """
-        Convert Gemini format to internal CV format
+        Convert Gemini analysis results to structured condition metrics.
         
-        Gemini format (from Streamlit app):
+        Input format (from st.session_state.analysis_results):
         {
-            "Front screen": {
-                "issues": [
-                    {
-                        "type": "scratches",
-                        "severity": "low",
-                        "location": "top-left corner",
-                        "description": "visible surface scratches"
-                    }
-                ],
-                "overall_condition": "good"
+            "Front": {
+                "overall_condition": "good",
+                "damage_details": {
+                    "scratches": [{"severity": "minor", "location": "top-left"}],
+                    "cracks": []
+                }
+            },
+            "Back": {
+                "overall_condition": "damaged",
+                "damage_details": {...}
             }
         }
         
-        Returns (internal format):
+        Output:
         {
-            "condition_score": 8.0,
             "overall_condition": "good",
-            "detected_issues": [...],
-            "metadata": {...}
+            "condition_score": 7.5,
+            "detected_issues": [
+                {
+                    "type": "scratch",
+                    "severity": "minor",
+                    "location": "front top-left",
+                    "impact": 0.02
+                }
+            ],
+            "severity_distribution": {
+                "minor": 2,
+                "moderate": 1,
+                "severe": 0
+            },
+            "total_discount_impact": 0.09,
+            "usage_years": 1.0
         }
         """
+        
+        if not gemini_analysis:
+            return self._get_default_condition(usage_years)
+        
+        # Collect all conditions and issues from all views
+        all_conditions = []
         all_issues = []
-        condition_counts = self._count_conditions(gemini_analysis)
         
-        # Extract all issues from all views
-        for view, analysis in gemini_analysis.items():
-            for issue in analysis.get('issues', []):
-                all_issues.append(self._format_issue(issue, view))
+        for view_name, analysis in gemini_analysis.items():
+            condition = analysis.get('overall_condition', 'good').lower()
+            all_conditions.append(condition)
+            
+            # Extract damage details
+            damage_details = analysis.get('damage_details', {})
+            
+            for damage_type, items in damage_details.items():
+                if items and isinstance(items, list):
+                    for item in items:
+                        issue = self._create_issue_entry(
+                            damage_type=damage_type,
+                            view=view_name,
+                            details=item
+                        )
+                        all_issues.append(issue)
         
-        # Calculate overall condition
-        overall_condition = self._determine_overall_condition(
-            condition_counts, len(gemini_analysis)
-        )
+        # Determine overall condition (worst case scenario)
+        overall_condition = self._determine_overall_condition(all_conditions)
         
-        # Calculate numeric score
-        condition_score = self._calculate_condition_score(
-            overall_condition, len(all_issues), usage_years
-        )
+        # Calculate condition score
+        base_score = self.CONDITION_SCORES.get(overall_condition, 7.0)
+        condition_score = self._adjust_score_for_issues(base_score, all_issues)
+        
+        # Calculate severity distribution
+        severity_dist = self._calculate_severity_distribution(all_issues)
+        
+        # Calculate total discount impact
+        total_impact = self._calculate_discount_impact(all_issues)
         
         return {
-            'condition_score': round(condition_score, 1),
             'overall_condition': overall_condition,
+            'condition_score': round(condition_score, 2),
             'detected_issues': all_issues,
-            'metadata': {
-                'total_views_analyzed': len(gemini_analysis),
-                'usage_years': usage_years,
-                **condition_counts
-            }
+            'severity_distribution': severity_dist,
+            'total_discount_impact': round(total_impact, 3),
+            'usage_years': usage_years,
+            'views_analyzed': list(gemini_analysis.keys()),
+            'issues_count': len(all_issues)
         }
     
-    def _count_conditions(self, analysis: Dict) -> Dict:
-        """Count condition types across all views"""
-        counts = {'pristine': 0, 'good': 0, 'fair': 0, 'poor': 0}
-        
-        for view_data in analysis.values():
-            condition = view_data.get('overall_condition', '').lower()
-            if condition in counts:
-                counts[condition] += 1
-        
-        return counts
-    
-    def _format_issue(self, issue: Dict, view: str) -> Dict:
-        """Format single issue to standard format"""
-        return {
-            'type': issue.get('type', 'unknown'),
-            'location': f"{view} - {issue.get('location', 'unknown')}",
-            'severity': self.SEVERITY_MAP.get(
-                issue.get('severity', 'low'), 'minor'
-            ),
-            'confidence': 0.85,
-            'description': issue.get('description', '')
-        }
-    
-    def _determine_overall_condition(
+    def _create_issue_entry(
         self, 
-        condition_counts: Dict, 
-        total_views: int
-    ) -> str:
-        """Determine overall condition from view counts"""
-        if condition_counts['pristine'] >= total_views * 0.6:
-            return 'excellent'
-        elif condition_counts['good'] >= total_views * 0.5:
-            return 'good'
-        elif condition_counts['fair'] >= total_views * 0.4:
-            return 'fair'
-        else:
-            return 'poor'
+        damage_type: str, 
+        view: str, 
+        details: Dict
+    ) -> Dict:
+        """
+        Create a standardized issue entry.
+        
+        Args:
+            damage_type: "scratches", "cracks", "dents", etc.
+            view: "Front", "Back", "Side", etc.
+            details: {"severity": "minor", "location": "top-left"}
+        
+        Returns:
+            {
+                "type": "scratch",
+                "severity": "minor",
+                "location": "back top-left",
+                "impact": 0.02
+            }
+        """
+        # Normalize damage type (remove plural)
+        normalized_type = damage_type.rstrip('s').lower()
+        
+        # Get severity
+        severity = details.get('severity', 'minor').lower()
+        
+        # Combine view and location
+        detail_location = details.get('location', '')
+        full_location = f"{view.lower()} {detail_location}".strip()
+        
+        # Get impact weight
+        impact = self.SEVERITY_WEIGHTS.get(severity, 0.02)
+        
+        return {
+            'type': normalized_type,
+            'severity': severity,
+            'location': full_location,
+            'impact': impact,
+            'view': view
+        }
     
-    def _calculate_condition_score(
-        self,
-        overall_condition: str,
-        num_issues: int,
-        usage_years: float
+    def _determine_overall_condition(self, conditions: List[str]) -> str:
+        """
+        Determine overall condition from multiple view conditions.
+        Uses worst-case scenario (most damaged condition wins).
+        """
+        if not conditions:
+            return 'good'
+        
+        # Priority order (worst to best)
+        priority = [
+            'broken', 'damaged', 'poor', 'fair', 
+            'good', 'very good', 'excellent'
+        ]
+        
+        # Find worst condition
+        for level in priority:
+            if level in conditions:
+                return level
+        
+        return 'good'
+    
+    def _adjust_score_for_issues(
+        self, 
+        base_score: float, 
+        issues: List[Dict]
     ) -> float:
-        """Calculate numeric condition score (1-10)"""
-        base_scores = {
-            'excellent': 9.5,
-            'good': 8.0,
-            'fair': 6.0,
-            'poor': 4.0
+        """
+        Adjust condition score based on number and severity of issues.
+        """
+        if not issues:
+            return base_score
+        
+        # Deduct points based on issues
+        total_deduction = 0
+        
+        for issue in issues:
+            severity = issue.get('severity', 'minor')
+            
+            # Deduction per issue type
+            deductions = {
+                'critical': 1.5,
+                'severe': 1.0,
+                'moderate': 0.5,
+                'minor': 0.2
+            }
+            
+            total_deduction += deductions.get(severity, 0.2)
+        
+        # Apply deduction with minimum score of 1.0
+        adjusted_score = max(1.0, base_score - total_deduction)
+        
+        return adjusted_score
+    
+    def _calculate_severity_distribution(self, issues: List[Dict]) -> Dict:
+        """Calculate how many issues of each severity level exist."""
+        distribution = {
+            'minor': 0,
+            'moderate': 0,
+            'severe': 0,
+            'critical': 0
         }
         
-        base_score = base_scores.get(overall_condition, 5.0)
-        issue_penalty = num_issues * 0.3
-        usage_penalty = min(usage_years * 0.2, 2.0)
+        for issue in issues:
+            severity = issue.get('severity', 'minor')
+            if severity in distribution:
+                distribution[severity] += 1
         
-        return max(1.0, base_score - issue_penalty - usage_penalty)
+        return distribution
+    
+    def _calculate_discount_impact(self, issues: List[Dict]) -> float:
+        """
+        Calculate total discount impact as a percentage.
+        This will be used by PriceCalculator for additional discounting.
+        
+        Returns:
+            Float between 0.0 and 1.0 (e.g., 0.15 = 15% additional discount)
+        """
+        if not issues:
+            return 0.0
+        
+        total_impact = sum(issue.get('impact', 0.02) for issue in issues)
+        
+        # Cap maximum impact at 30% (0.30)
+        return min(0.30, total_impact)
+    
+    def _get_default_condition(self, usage_years: float) -> Dict:
+        """Return default condition when no CV analysis is available."""
+        return {
+            'overall_condition': 'good',
+            'condition_score': 7.0,
+            'detected_issues': [],
+            'severity_distribution': {
+                'minor': 0,
+                'moderate': 0,
+                'severe': 0,
+                'critical': 0
+            },
+            'total_discount_impact': 0.0,
+            'usage_years': usage_years,
+            'views_analyzed': [],
+            'issues_count': 0
+        }
+    
+    def get_condition_summary(self, evaluation: Dict) -> str:
+        """
+        Generate human-readable condition summary.
+        Useful for displaying in UI.
+        """
+        condition = evaluation.get('overall_condition', 'good')
+        score = evaluation.get('condition_score', 7.0)
+        issues = evaluation.get('detected_issues', [])
+        
+        if not issues:
+            return f"Device is in {condition} condition (score: {score}/10) with no significant damage detected."
+        
+        issue_summary = self._summarize_issues(issues)
+        
+        return (
+            f"Device is in {condition} condition (score: {score}/10). "
+            f"Detected issues: {issue_summary}"
+        )
+    
+    def _summarize_issues(self, issues: List[Dict]) -> str:
+        """Create brief text summary of issues."""
+        if not issues:
+            return "none"
+        
+        # Group by severity
+        by_severity = {}
+        for issue in issues:
+            sev = issue['severity']
+            if sev not in by_severity:
+                by_severity[sev] = []
+            by_severity[sev].append(f"{issue['type']} on {issue['location']}")
+        
+        # Format output
+        parts = []
+        for severity in ['critical', 'severe', 'moderate', 'minor']:
+            if severity in by_severity:
+                count = len(by_severity[severity])
+                parts.append(f"{count} {severity} issue(s)")
+        
+        return ", ".join(parts)
